@@ -58,4 +58,12 @@ class Event
     end.uniq.sort
   end
 
+  def sell(item, quantity)
+    if  total_inventory[item][:food_trucks].include?(item) &&  total_inventory[item][:quantity] > amount
+      true
+    else
+      false
+    end
+  end
+
 end
