@@ -19,7 +19,38 @@ class Event
   def food_trucks_that_sell(item)
     @food_trucks.select do |food_truck|
       food_truck.inventory.include?(item)
-    end 
+    end
+  end
+
+  def total_inventory
+    result = {}
+    items = @food_trucks.flat_map do |food_truck|
+      food_truck.inventory.keys
+    end.uniq
+    items.each do |item|
+      total = food_trucks_that_sell(item).sum do |food_truck|
+        food_truck.inventory[item]
+      end
+      result[item] = {quantity: total, food_trucks: food_trucks_that_sell(item)}
+    end
+    result
+  end
+
+  def overstocked_items
+    result = []
+    total_inventory.each do |item, info|
+      result << item if total_inventory[item][:quantity] > 50 && total_inventory[item][:food_trucks].count > 1
+    end
+    result
+  end
+
+  def sorted_item_list
+    sorted = @food_trucks.flat_map do |food_truck|
+      food_truck.inventory.keys
+    end
+    sorted.flat_map do |item|
+      item.name
+    end.uniq.sort
   end
 
 end
